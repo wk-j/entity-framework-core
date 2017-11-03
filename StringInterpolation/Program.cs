@@ -79,8 +79,7 @@ namespace StringInterpolation
                 context.SaveChanges();
 
                 var name = "wk";
-                //var rs = context.Persons.FromSql($"SELECT * FROM Persons WHERE FirstName = {name}");
-                var rs = context.Persons.ToListAsync(default(CancellationToken)).Result;
+                var rs = context.Persons.FromSql($"select * from \"Persons\" where \"FirstName\" = {name}");
                 foreach (var rr in rs)
                 {
                     Console.WriteLine($"{rr.Id} {rr.FirstName} {rr.LastName}");

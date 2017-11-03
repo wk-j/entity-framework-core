@@ -1,7 +1,6 @@
 ## Entity Framework Core
 
 ```
-// Can't use .FromSQL
 dotnet add StringInterpolation/StringInterpolation.csproj package Npgsql.EntityFrameworkCore.PostgreSQL
 
 // Not test

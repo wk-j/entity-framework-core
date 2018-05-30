@@ -51,9 +51,7 @@ namespace StringInterpolation
         public DbSet<QPerson> Persons { set; get; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host = localhost; Database=ef;Username=wk;Password=");
-            //optionsBuilder.UseMySQL("server=localhost;userid=root;pwd=1234;port=3306;database=ef");
-            //optionsBuilder.UseSqlServer(@"Server=(localdb)\v11.0;Database=NORTHWIND;Trusted_Connection=True;MultipleActiveResultSets=true");
+            optionsBuilder.UseNpgsql("Host=localhost; Database=StringInterpolation;Username=postgres;Password=1234");
         }
     }
 
@@ -63,7 +61,6 @@ namespace StringInterpolation
         {
             using (var context = new MyContext())
             {
-                context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
 
                 var serviceProvider = context.GetInfrastructure<IServiceProvider>();

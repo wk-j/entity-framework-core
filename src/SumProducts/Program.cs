@@ -60,7 +60,7 @@ GROUP BY Year";
         }
 
         static void Insert(MyContext context) {
-            var range = Enumerable.Range(0, 10_000);
+            var range = Enumerable.Range(0, 100_000);
             var random = new Random();
             foreach (var item in range) {
                 var date = new DateTime(random.Next(2000, 2019), random.Next(1, 13), random.Next(1, 28));

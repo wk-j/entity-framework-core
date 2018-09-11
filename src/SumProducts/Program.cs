@@ -24,7 +24,6 @@ namespace SumProducts {
             var sql = @"
 SELECT SUM(Total) as Total, MONTHNAME(LastUpdate) as Month, YEAR(LastUpdate) as Year
 FROM Orders
-
 GROUP BY Month, Year";
             var rs = connection.Query<Result2>(sql).ToList();
             connection.Close();
@@ -59,42 +58,40 @@ GROUP BY Year";
             return rs;
         }
 
-        static void Insert(MyContext context) {
-            var range = Enumerable.Range(0, 100_000);
-            var random = new Random();
-            foreach (var item in range) {
-                var date = new DateTime(random.Next(2000, 2019), random.Next(1, 13), random.Next(1, 28));
-                var order = new Order {
-                    LastUpdate = date,
-                    Total = random.Next(100)
-                };
-                context.Add(order);
-            }
-            context.SaveChanges();
+        static string GetConnectionString() {
+            var connectionString = "Host=localhost;User=root;Password=1234;Database=A1234";
+            return connectionString;
         }
 
-        static void CreateTable(MyContext context) {
-            context.Database.EnsureCreated();
+        static double Diff(Action action) {
+            var start = DateTime.Now;
+            action();
+            var now = DateTime.Now;
 
-            if (!context.Orders.Any()) {
-                Insert(context);
-            }
+            var diff = (now - start).TotalMilliseconds;
+            return diff;
         }
 
         static void Main(string[] args) {
-            var connectionString = "Host=localhost;User=root;Password=1234;Database=A1234";
-            var collection = new ServiceCollection();
+            var connectionString = GetConnectionString();
 
-            collection.AddDbContext<MyContext>(options => {
-                options.UseMySql(connectionString);
-            });
+            var rs = Utility.Init(connectionString);
+            if (rs) {
 
-            var provider = collection.BuildServiceProvider();
-            var context = provider.GetService<MyContext>();
-            CreateTable(context);
+                var d1 = Diff(() => {
+                    var d = Query1(connectionString);
+                    // DynamicTable.From(d).Write();
+                });
 
-            var rs = Query2(connectionString);
-            DynamicTable.From(rs).Write();
+                var d2 = Diff(() => {
+                    var d = Query2(connectionString);
+                    // DynamicTable.From(d).Write();
+                });
+
+                Console.WriteLine(d1);
+                Console.WriteLine(d2);
+                Console.WriteLine(Math.Abs(d1 - d2));
+            }
         }
     }
 }

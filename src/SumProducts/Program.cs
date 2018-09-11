@@ -88,9 +88,9 @@ GROUP BY Year";
                     // DynamicTable.From(d).Write();
                 });
 
-                Console.WriteLine(d1);
-                Console.WriteLine(d2);
-                Console.WriteLine(Math.Abs(d1 - d2));
+                Console.WriteLine($"G {d1} ms");
+                Console.WriteLine($"S {d2} ms");
+                Console.WriteLine($"Diff {Math.Abs(d1 - d2)} ms");
             }
         }
     }

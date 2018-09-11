@@ -9,9 +9,30 @@ using DynamicTables;
 
 namespace SumProducts {
 
+    class Result2 {
+        public int Total { set; get; }
+        public string Month { set; get; }
+        public int Year { set; get; }
+    }
+
     class Program {
 
-        static List<Result> Query(string connectionString) {
+        static List<Result2> Query2(string connectionString) {
+            var connection = new MySqlConnection(connectionString);
+            connection.Open();
+
+            var sql = @"
+SELECT SUM(Total) as Total, MONTHNAME(LastUpdate) as Month, YEAR(LastUpdate) as Year
+FROM Orders
+
+GROUP BY Month, Year";
+            var rs = connection.Query<Result2>(sql).ToList();
+            connection.Close();
+            return rs;
+        }
+
+
+        static List<Result> Query1(string connectionString) {
             var connection = new MySqlConnection(connectionString);
             connection.Open();
 
@@ -72,7 +93,7 @@ GROUP BY Year";
             var context = provider.GetService<MyContext>();
             CreateTable(context);
 
-            var rs = Query(connectionString);
+            var rs = Query2(connectionString);
             DynamicTable.From(rs).Write();
         }
     }

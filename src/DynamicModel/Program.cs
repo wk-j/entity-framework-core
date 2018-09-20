@@ -22,8 +22,8 @@ namespace DynamicModel {
     }
 
     class Program {
-        static void Main(string[] args) {
 
+        static DynamicContext CreateContext(string connectionString, string tableName, Type model) {
             var obj = new {
                 A = 100,
                 B = 200,
@@ -32,7 +32,7 @@ namespace DynamicModel {
 
             var modelOptions = new ModelOptions {
                 ModelType = obj.GetType(),
-                TypeName = "MyModel"
+                TypeName = tableName
             };
 
             var collection = new ServiceCollection();
@@ -42,12 +42,23 @@ namespace DynamicModel {
 
             collection.AddSingleton<ModelOptions>(modelOptions);
             collection.AddDbContext<DynamicContext>(builder => {
-                var conn = "Host=localhost;User Id=postgres; Password=1234;Database=DynamicModel";
-                builder.UseNpgsql(conn);
+                builder.UseNpgsql(connectionString);
             });
 
             var provider = collection.BuildServiceProvider();
             var context = provider.GetService<DynamicContext>();
+            return context;
+        }
+
+        static void Main(string[] args) {
+            var a = new {
+                A = 100,
+                B = 200,
+                C = DateTime.Now,
+                D = 100.0
+            };
+            var conn = "Host=localhost;User Id=postgres; Password=1234;Database=DynamicModel";
+            var context = CreateContext(conn, "MyTable", a.GetType());
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
         }

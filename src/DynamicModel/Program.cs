@@ -7,20 +7,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using System.Linq;
 
 namespace DynamicModel {
     public class ModelBase {
         [Key]
-        public int _Id { set; get; }
+        public int _Id { set; get; } = 1;
     }
 
     class Utility {
         public static Type BuildClass() {
             var src = @"
                 using DynamicModel;
+                using System;
                 class A: ModelBase {
-                    public string Name { set; get; }
-                    public string LastName { set; get; }
+                    public string Name { set; get; } = ""Name"";
+                    public string LastName { set; get; } = ""LastName"";
                 }
                 return typeof(A);
             ";
@@ -42,6 +44,14 @@ namespace DynamicModel {
             // var entity = modelBuilder.Entity<Student>();
             var type = Utility.BuildClass();
             var entity = modelBuilder.Entity(type);
+
+            var a = Activator.CreateInstance(type);
+            //type.GetProperty("Name").SetValue(a, "Name");
+            //type.GetProperty("LastName").SetValue(a, "LastName");
+
+            entity.HasData(new[] {
+                a
+            });
         }
     }
 
@@ -62,7 +72,6 @@ namespace DynamicModel {
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
-            Console.ReadLine();
 
         }
     }

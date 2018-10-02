@@ -10,6 +10,9 @@ namespace BackingField {
         [Key]
         public int Id { set; get; }
         public string Name { private set; get; } = "Product";
+
+        // private readonly int price;
+        private int price;
     }
 
     class MyContext : DbContext {
@@ -18,6 +21,10 @@ namespace BackingField {
         }
 
         public DbSet<Product> Products { set; get; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder) {
+            modelBuilder.Entity<Product>().Property("price");
+        }
 
     }
 
@@ -30,8 +37,7 @@ namespace BackingField {
 
             var provider = collection.BuildServiceProvider();
             var context = provider.GetService<MyContext>();
-            context.Database.EnsureCreated();
-
+            context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
 

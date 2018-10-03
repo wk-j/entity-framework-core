@@ -1,4 +1,5 @@
 {
+    "FSharp.fsacRuntime": "net",
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,

@@ -1,18 +1,23 @@
 ﻿open System
-open Microsoft.Extensions.DependencyInjection
-open Microsoft.EntityFrameworkCore
 open HelloEf.Models
 open System.Net.Http.Headers
+
+open Microsoft.EntityFrameworkCore
 open Microsoft.Extensions.Logging.Console
 open Microsoft.Extensions.Logging
+open Microsoft.Extensions.DependencyInjection
 
 let createContext connectionString =
-    let collection = ServiceCollection().AddDbContext<MyContext>(fun options ->
-        let provider = new ConsoleLoggerProvider((fun _ level -> level <> LogLevel.Debug), true)
-        let factory = new LoggerFactory([provider])
-        options.UseLoggerFactory(factory)  |> ignore
-        options.UseNpgsql (connectionString: string) |> ignore
-    )
+    let collection =
+        ServiceCollection()
+            .AddDbContext<MyContext>(fun options ->
+                let provider =
+                    new ConsoleLoggerProvider((fun _ level ->
+                        level <> LogLevel.Debug), true)
+                let factory = new LoggerFactory([provider])
+                options.UseLoggerFactory(factory)  |> ignore
+                options.UseNpgsql (connectionString: string) |> ignore
+            )
     let provider = collection.BuildServiceProvider()
     provider.GetService<MyContext>()
 

@@ -13,6 +13,7 @@ namespace Array {
         [Key]
         public int Id { set; get; }
         public List<string> Books { set; get; }
+        public string Address { set; get; }
     }
 
     public class LibraryContext : DbContext {
@@ -32,8 +33,6 @@ namespace Array {
         }
     }
 
-
-
     class Program {
 
         static void Insert(DbContextOptions options) {
@@ -46,7 +45,8 @@ namespace Array {
                     "Book 1",
                     "Book 2",
                     "Book 3"
-                }
+                },
+                Address = "ABC"
             };
 
             context.Libraries.Add(library);
@@ -56,7 +56,7 @@ namespace Array {
         static void Query(DbContextOptions options) {
             using var context = new LibraryContext(options);
 
-            var data = context.Libraries.Where(x => x.Books.Contains("Book 1"));
+            var data = context.Libraries.Where(x => x.Address == "ABC" && x.Books.Contains("Book 1"));
             foreach (var item in data) {
                 Console.WriteLine(string.Join(";", item.Books));
             }

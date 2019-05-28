@@ -5,15 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AutoIncrease {
     public class Student {
-        // [Key]
-        // [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         public int Id { set; get; }
         public string Name { set; get; }
     }
-    class MyContext : DbContext {
-        public MyContext(DbContextOptions options) : base(options) {
 
-        }
+    class MyContext : DbContext {
+        public MyContext(DbContextOptions options) : base(options) { }
         public DbSet<Student> Students { set; get; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
@@ -24,7 +22,6 @@ namespace AutoIncrease {
             modelBuilder.Entity<Student>().Property(e => e.Id)
                 .HasDefaultValueSql(@"nextval('""StudentId""')");
         }
-
     }
 
     class Program {
@@ -50,7 +47,6 @@ namespace AutoIncrease {
                 context.Students.Add(new Student { });
                 context.SaveChanges();
             }
-
         }
     }
 }

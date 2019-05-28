@@ -1,5 +1,6 @@
 {
     "FSharp.fsacRuntime": "net",
+    "omnisharp.path": "latest",
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,

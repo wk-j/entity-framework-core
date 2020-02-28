@@ -1,1 +1,3 @@
 ## EF Core
+
+- [ ] Generated

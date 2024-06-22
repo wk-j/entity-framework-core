@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Immutable;
 
@@ -30,9 +31,11 @@ public class UnitTest1 : TestBase {
         var user = db.Users.First();
         var newUser = user with { FirstName = "UU" };
 
-        _ = await db.UpdateAsync(newUser,
-            x => x.Property(x => x.FirstName).IsModified = true
-        );
+        Action<EntityEntry<User>> action = x => {
+            x.Property(x => x.FirstName).IsModified = true;
+        };
+
+        _ = await db.UpdateAsync(newUser, action);
     }
 
     [Fact]

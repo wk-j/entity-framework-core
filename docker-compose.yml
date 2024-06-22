@@ -9,7 +9,7 @@ services:
       - "3306:3306"
 
   postgres:
-    image: "postgres:9.3"
+    image: "postgres:16"
     environment:
       POSTGRES_PASSWORD: 1234
       POSTGRES_USER: postgres

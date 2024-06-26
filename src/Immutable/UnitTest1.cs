@@ -6,7 +6,7 @@ namespace Immutable;
 public class UnitTest1 : TestBase {
     [Fact]
     public async Task ShouldUnableToSaveChange() {
-        using var db = GetContext();
+        using var db = GetQueryContext();
         var user = new User {
             FirstName = "John",
             LastName = "Doe"
@@ -16,7 +16,7 @@ public class UnitTest1 : TestBase {
 
     [Fact]
     public async Task ForceUpdate() {
-        using var db = GetContext();
+        using var db = GetQueryContext();
         var users = db.Users.ToList();
 
         foreach (var user in users) {
@@ -26,10 +26,10 @@ public class UnitTest1 : TestBase {
     }
 
     [Fact]
-    public async Task PartialUpdate() {
-        using var db = GetContext();
+    public async Task PartialUpdate1() {
+        using var db = GetQueryContext();
         var user = db.Users.First();
-        var newUser = user with { FirstName = "UU" };
+        var newUser = user with { FirstName = "UU 1" };
 
         Action<EntityEntry<User>> action = x => {
             x.Property(x => x.FirstName).IsModified = true;
@@ -39,8 +39,21 @@ public class UnitTest1 : TestBase {
     }
 
     [Fact]
+    public async Task PartialUpdate2() {
+        using var queryDb = GetQueryContext();
+        using var updateDb = GetQueryContext();
+
+        var currentUser = queryDb.Users
+            .First();
+
+        var newUser = currentUser with { FirstName = "UU 4", Age = DateTime.Now.Second };
+        _ = await updateDb.UpdateAsync(currentUser, newUser);
+    }
+
+
+    [Fact]
     public async Task BulkUpdate() {
-        using var db = GetContext();
+        using var db = GetQueryContext();
         var users = db.Users.Where(x => x.Id > 0);
 
         _ = users.ExecuteUpdate(user =>

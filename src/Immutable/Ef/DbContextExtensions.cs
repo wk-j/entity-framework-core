@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 namespace Immutable;
 
 public static class DbContextExtensions {
+
     public static async Task<TEntity> UpdateAsync<TEntity>(this DbContext context,
                                                            TEntity entity,
                                                            Action<EntityEntry<TEntity>> action) where TEntity : Entity {
@@ -14,15 +15,34 @@ public static class DbContextExtensions {
         return entry.Entity;
     }
 
-    public static async Task<TEntity> CreateAsync<TEntity>(
+    public static async Task<TEntity> UpdateAsync<TEntity>(
         this DbContext context,
-        TEntity entity,
-        CancellationToken ct = default
-    ) where TEntity : Entity => await context.SaveEntityStateAsync(
-        entity,
-        EntityState.Added,
-        ct
-    );
+        TEntity currentEnty,
+        TEntity newEntity,
+        CancellationToken ct = default) where TEntity : Entity {
+
+        try {
+            context.Attach(currentEnty);
+            context.Entry(currentEnty).CurrentValues.SetValues(newEntity);
+            _ = context.SaveChanges();
+
+            return await Task.FromResult(newEntity);
+        } catch (Exception ex) {
+            throw;
+        }
+    }
+
+    public static async Task<TEntity> CreateAsync<TEntity>(
+            this DbContext context,
+            TEntity entity,
+            CancellationToken ct = default
+        ) where TEntity : Entity {
+        return await context.SaveEntityStateAsync(
+            entity,
+            EntityState.Added,
+            ct
+        );
+    }
 
     // public static async Task<TEntity> UpdateAsync<TEntity>(
     //     this DbContext context,
@@ -38,11 +58,9 @@ public static class DbContextExtensions {
         this DbContext context,
         TEntity entity,
         CancellationToken ct = default
-    ) where TEntity : Entity => await context.SaveEntityStateAsync(
-        entity,
-        EntityState.Deleted,
-        ct
-    );
+    ) where TEntity : Entity {
+        _ = await context.SaveEntityStateAsync(entity, EntityState.Deleted, ct);
+    }
 
     private static async Task<TEntity> SaveEntityStateAsync<TEntity>(
         this DbContext context,

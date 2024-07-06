@@ -15,17 +15,6 @@ public class UnitTest1 : TestBase {
     }
 
     [Fact]
-    public async Task ForceUpdate() {
-        using var db = GetQueryContext();
-        var users = db.Users.ToList();
-
-        foreach (var user in users) {
-            var newUser = user with { FirstName = "wk" };
-            // _ = await db.UpdateAsync(newUser);
-        }
-    }
-
-    [Fact]
     public async Task PartialUpdate1() {
         using var db = GetQueryContext();
         var user = db.Users.First();
@@ -41,13 +30,9 @@ public class UnitTest1 : TestBase {
     [Fact]
     public async Task PartialUpdate2() {
         using var queryDb = GetQueryContext();
-        using var updateDb = GetQueryContext();
-
-        var currentUser = queryDb.Users
-            .First();
-
+        var currentUser = queryDb.Users.First();
         var newUser = currentUser with { FirstName = "UU 4", Age = DateTime.Now.Second };
-        _ = await updateDb.UpdateAsync(currentUser, newUser);
+        _ = await queryDb.UpdateAsync(currentUser, newUser);
     }
 
 

@@ -21,15 +21,12 @@ public static class DbContextExtensions {
         TEntity newEntity,
         CancellationToken ct = default) where TEntity : Entity {
 
-        try {
-            context.Attach(currentEnty);
-            context.Entry(currentEnty).CurrentValues.SetValues(newEntity);
-            _ = context.SaveChanges();
+        var entry = context.Attach(currentEnty);
+        entry.CurrentValues.SetValues(newEntity);
+        await context.SaveChangesAsync();
+        entry.State = EntityState.Detached;
 
-            return await Task.FromResult(newEntity);
-        } catch (Exception ex) {
-            throw;
-        }
+        return newEntity;
     }
 
     public static async Task<TEntity> CreateAsync<TEntity>(
@@ -43,16 +40,6 @@ public static class DbContextExtensions {
             ct
         );
     }
-
-    // public static async Task<TEntity> UpdateAsync<TEntity>(
-    //     this DbContext context,
-    //     TEntity entity,
-    //     CancellationToken ct = default
-    // ) where TEntity : Entity => await context.SaveEntityStateAsync(
-    //     entity,
-    //     EntityState.Modified,
-    //     ct
-    // );
 
     public static async Task DeleteAsync<TEntity>(
         this DbContext context,

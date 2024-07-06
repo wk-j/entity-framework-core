@@ -1,0 +1,1 @@
+- https://code-corner.dev/2022/08/13/Immutability-and-Entity-Framework-Core/

@@ -43,7 +43,7 @@ public class QueryTest : TestBase {
     }
 
     [Fact]
-    public void TestQuery() {
+    public void TestQuery1() {
         var db = GetQueryContext();
         var name = "a1";
         var intValue = 123;
@@ -61,6 +61,20 @@ public class QueryTest : TestBase {
                 )
             )
         );
+
+        foreach (var file in files) {
+            Console.WriteLine(file.Name);
+        }
+    }
+
+    [Fact]
+    public void TestQuery2() {
+        var db = GetQueryContext();
+
+        var files = db.Files
+            .Include(file => file.Properties)
+            .Where(x => x.Properties.Any(p => p.Name == "a1" && p.IntValue == 123))
+            .Where(x => x.Properties.Any(p => p.Name == "a2" && p.StringValue == "123"));
 
         foreach (var file in files) {
             Console.WriteLine(file.Name);
